@@ -14,10 +14,13 @@ const uri = process.env.URI
 // ROTUES Imports
 import userRouter from './src/routes/users.route.js';
 import categoryRoutes from './src/routes/category.route.js';
-
+import productRoute from './src/routes/product.model.js';
+import cartRouter from './src/routes/cart.route.js';
 
 app.use('/api/v1',userRouter);
 app.use('/api/v1',categoryRoutes);
+app.use('/api/v1', productRoute);
+app.use('/api/v1', cartRouter)
 
 
 

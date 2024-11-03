@@ -26,7 +26,7 @@ const singleCategory = async (req,res)=>{
 const postCategory = async (req,res)=>{
    try {
       const {name} = req.body
-      const validate = await User.findOne({name})
+      const validate = await Category.findOne({name})
       if(validate){
          return res.status(401).json({success:false,message:"Name Already Exist..."})
       }
@@ -39,7 +39,7 @@ const postCategory = async (req,res)=>{
 const putCategory = async (req,res)=>{
    try {
       const {id} = req.params
-      const category = await Category.findByIdAndUpdate(id)
+      const category = await Category.findByIdAndUpdate(id,req.body,{new:true})
       if(!category){
          res.status(404).json({success:false,message:"no such Category.."})
       }
