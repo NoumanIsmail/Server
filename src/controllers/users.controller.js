@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { User } from "../models/users.model.js";
 
 const getUsers = async(req,res)=>{
@@ -34,6 +35,41 @@ const postUser = async (req,res)=>{
       res.status(500).json({message:"Internal Server Error...", success:false, error})
    }
 }
+const login = async (req,res) =>{
+   try {
+      const {email,password} = req.body
+      const user = await User.findOne({email})
+      if(!user || !(await user.comparePassword(password))){
+         res.status(401).json({message:"Invalid username or password", success:false})
+      }
+      const token = jwt.sign(
+         {
+         userId:user._id,
+         userRole:user.role
+         },
+         process.env.JWT_SECRET,
+         {expiresIn:'1h'}
+
+      )
+      
+      res.cookie('token',token,{
+         httpOnly:true,
+         maxAge:3600000
+      });
+      res.status(200).json({message:`Welcome ${user.name}`,success:true,})
+
+   } catch (error) {
+      res.status(500).json({message:"Internal Server Error...", success:false, error})
+   }
+}
+const logout = async(req,res)=>{
+   try {
+      res.clearCookie('token');
+      res.status(200).json({message:"logout Successfully...", success:true})
+   } catch (error) {
+      res.status(500).json({message:"Internal Server Error...", success:false, error})
+   }
+}
 const putUser = async (req,res)=>{
    try {
       const {id} = req.params
@@ -59,4 +95,4 @@ const delelteUser = async (req,res)=>{
    }
 }
 
-export {getUsers,postUser,putUser,delelteUser,singleUser}
+export {getUsers,postUser,putUser,delelteUser,singleUser, login, logout}
