@@ -23,12 +23,22 @@ const   singleProduct = async (req,res) =>{
 }
 const postProduct = async (req,res) =>{
     try {
-        const {categoryId} = req.body
+        const {name , price, description, stock,categoryId} = req.body
+        const thumbnail = req.files.thumbnail ? req.files.thumbnail[0].filename:null;
+        const images = req.files.images ? req.files.images.map(file => file.filename) : [];
         const category = await Category.findById(categoryId)
         if(!category){
             res.status(404).json({message:"Category not found", success:trur})
         }
-        const newProduct = await Product.create(req.body)
+        const newProduct = await Product.create({
+            name,
+            price,
+            description,
+            stock,
+            categoryId,
+            thumbnail,
+            images
+        })
         res.status(200).json({message:"product created successflly", success:true, newProduct})
     } catch (error) {
         res.status(500).json({message:"Internal Server Error", error})

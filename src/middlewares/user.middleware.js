@@ -1,18 +1,17 @@
 import jwt from 'jsonwebtoken';
-import { User } from '../models/users.model';
 
 
 const userMiddleware = async (req,res,next) =>{
-    const token = req.cookie.token
-    if(!token){
-        res.status(401).json({message:"no token found...", success:false});
+    const token = req.cookies.token;
+        try {
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
-    try {
-        const verifyUser = jwt.verify(token,process.env.JWT_SECRET);
-        const user = await User.findById(verifyUser.userId);
-        req.user = user;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded.userId; // Attach decoded data (userId, role) to req.user
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Invalid token.' ,success:false, error});
+        res.status(401).json({ message: 'Invalid token.' });
     }
 }
+export default userMiddleware;

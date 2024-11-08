@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    Description:{
+    description:{
         type:String,
         trim:true
     },
@@ -22,7 +22,9 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    images:[String],
+    images:[
+        {type:String}
+    ],
     categoryId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Category',
